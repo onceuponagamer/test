@@ -24,7 +24,7 @@ def main():
     user_input = None
 
     if generate_file_input and uploaded_file is not None:
-        file_type = uploaded_file.type
+        #file_type = uploaded_file.type
         #st.write(file_type)
         user_input = uploaded_file.read()
     
@@ -36,8 +36,8 @@ def main():
         if user_input:
             with st.spinner("Generating Video..."):
                 try:
-                    #st.video(user_input)
-                    video_predict(user_input)
+                    st.video(user_input)
+                    #video_predict(user_input)
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 
