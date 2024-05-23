@@ -1,5 +1,7 @@
 # v 0.0.1
 import streamlit as st
+import cv2
+from util.prediction import video_predict
 
 #st.title('hello world!')
 
@@ -12,7 +14,7 @@ def main():
         """
         % _author_)
 
-    tab1, tab2, tab3 = st.tabs(["Upload a File", "Enter Text Manually", "Website URL"])
+    tab1, tab2, tab3 = st.tabs(["Upload a File", "Use Webcam", "..."])
     user_input = None
 
     with tab1:
@@ -34,7 +36,8 @@ def main():
         if user_input:
             with st.spinner("Generating Video..."):
                 try:
-                    st.video(user_input)
+                    #st.video(user_input)
+                    video_predict(user_input)
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 
