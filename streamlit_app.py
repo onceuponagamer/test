@@ -3,6 +3,7 @@ import streamlit as st
 #import cv2
 import io
 from util.prediction import video_predict
+from ffmpy import FFmpeg
 
 temp_file_to_save = './temp_file_1.mp4'
 temp_file_result  = './temp_file_2.mp4'
@@ -25,6 +26,17 @@ def show_video(filename):
         video_bytes = video_file.read()
         st.video(video_bytes)
 
+def click_button():
+    convertedVideo = "./h264.mp4"
+    #subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
+
+    ff = FFmpeg(
+        inputs={temp_file_result: None},
+        outputs={convertedVideo: None}
+    )
+    ff.cmd
+    ff.run()
+
 def main():
     _author_ = "melike"
     st.title("Distraction Detection")
@@ -44,6 +56,7 @@ def main():
     with tab1:
         uploaded_file = st.file_uploader("Upload a file", type=["avi", "mp4", "mov"])
         generate_file_input = st.button("Detection from File")
+        st.button('Convert video', on_click=click_button)
             
     user_input = None
 
