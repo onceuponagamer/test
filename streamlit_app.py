@@ -3,6 +3,7 @@ import streamlit as st
 #import cv2
 import io
 from util.prediction import video_predict
+from util.prediction import convert_to_x264
 #from ffmpy import FFmpeg
 import subprocess
 import ffmpeg
@@ -29,7 +30,9 @@ def show_video(filename):
         st.video(video_bytes)
 
 def click_button():
-    pass
+    convert_to_x264(temp_file_result, output_file)
+    #video_predict(temp_file_to_save, temp_file_result)
+    show_video(output_file)
     #convertedVideo = "./testh264.mp4"
     #subprocess.call(args=f"ffmpeg -y -i {temp_file_result} -c:v libx264 {convertedVideo}".split(" "))
     #subprocess.call(args=f"ffmpeg -y -c:v h264_v4l2m2m -i {temp_file_result} {convertedVideo}".split(" "))

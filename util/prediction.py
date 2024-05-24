@@ -1,11 +1,29 @@
 import cv2
-from ffmpy import FFmpeg
+#from ffmpy import FFmpeg
 import subprocess
 #import datetime
 import os
 
 face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('files/haarcascade_eye.xml')
+
+def convert_to_x264(input_file, output_file):
+    command = [
+        'ffmpeg',
+        '-i', input_file,
+        '-c:v', 'libx264',
+        '-crf', '23',
+        '-preset', 'medium',
+        output_file
+    ]
+    result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+    if result.returncode != 0:
+        print("error:")
+        print(result.stderr.decode())
+    else:
+        print("ffmpeg output:")
+        print(result.stdout.decode())
 
 def video_predict(file, output_video_path):
     # Capture
@@ -21,7 +39,7 @@ def video_predict(file, output_video_path):
     #output_video_path = f'output_{datetime.date.today()}.mp4' 
     #out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10, (frame_width, frame_height))
     fourcc_mp4 = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_video_path, fourcc_mp4, frame_fps, (frame_width, frame_height),isColor = False)
+    out = cv2.VideoWriter(output_video_path, fourcc_mp4, frame_fps, (frame_width, frame_height)) #isColor = False
 
     scale_factor = 1.1
     min_neighbours_for_faces = 5
@@ -47,11 +65,12 @@ def video_predict(file, output_video_path):
             # Frames
             total_frames += 1
             cv2.putText(img, f"Frames: {total_frames}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
-
-        out.write(img)
+            out.write(img)
+            print(total_frames)
 
     cap.release()
     out.release()
 
+    #convert_to_x264('temp_file_2.mp4', 'temp_file_1.mp4')
     #os.system("ffmpeg -i temp_file_2.mp4 -vcodec libx264 temp_file_1.mp4")
-    subprocess.call(args=f"ffmpeg -y -i temp_file_2.mp4 -c:v libx264 temp_file_1.mp4".split(" "))
+    #subprocess.call(args=f"ffmpeg -y -i temp_file_2.mp4 -c:v libx264 temp_file_1.mp4".split(" "))
