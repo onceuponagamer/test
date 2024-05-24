@@ -31,8 +31,8 @@ def click_button():
     #subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
 
     ff = FFmpeg(
-        inputs={temp_file_result: None},
-        outputs={convertedVideo: None}
+        inputs={'temp_file_2.mp4': None},
+        outputs={'h264.mp4': None}
     )
     ff.cmd
     ff.run()
