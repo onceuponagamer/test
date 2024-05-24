@@ -53,6 +53,5 @@ def video_predict(file, output_video_path):
 
     convertedVideo = "./h264.mp4"
     subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
-    st.video(convertedVideo)
 
     return convertedVideo
