@@ -1,18 +1,25 @@
 import cv2
-import datetime
+import subprocess
+#import datetime
 
 face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('files/haarcascade_eye.xml')
 
-def video_predict(file):
+def video_predict(file, output_video_path):
     # Capture
     cap = cv2.VideoCapture(file)
 
     # Recording
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-    output_video_path = f'output_{datetime.date.today()}.mp4' 
-    out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10, (frame_width, frame_height))
+    #frame_width = int(cap.get(3))
+    #frame_height = int(cap.get(4))
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frame_fps = cap.get(cv2.CAP_PROP_FPS)
+
+    #output_video_path = f'output_{datetime.date.today()}.mp4' 
+    #out = cv2.VideoWriter(output_video_path, cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10, (frame_width, frame_height))
+    fourcc_mp4 = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_video_path, fourcc_mp4, frame_fps, (frame_width, frame_height),isColor = False)
 
     scale_factor = 1.1
     min_neighbours_for_faces = 5
@@ -39,14 +46,13 @@ def video_predict(file):
             total_frames += 1
             cv2.putText(img, f"Frames: {total_frames}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
 
-            out.write(img)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        out.write(img)
 
     cap.release()
     out.release()
-    cv2.destroyAllWindows()
-    cv2.waitKey(1)
 
-    return output_video_path
+    convertedVideo = "./h264.mp4"
+    subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
+    st.video(convertedVideo)
+
+    return convertedVideo

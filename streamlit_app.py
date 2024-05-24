@@ -1,12 +1,12 @@
 # v 0.0.1
 import streamlit as st
-import cv2
+#import cv2
 import io
 from util.prediction import video_predict
 
 temp_file_to_save = './temp_file_1.mp4'
 temp_file_result  = './temp_file_2.mp4'
-output_file = './output_2024-05-23.mp4'
+#output_file = './output_2024-05-23.mp4'
 
 # func to save BytesIO on a drive
 def write_bytesio_to_file(filename, bytesio):
@@ -19,6 +19,12 @@ def write_bytesio_to_file(filename, bytesio):
         # Copy the BytesIO stream to the output file
         outfile.write(bytesio.read())
 
+def show_video(filename):
+    #st.write(filename)
+    with open(filename, "rb") as video_file:
+        video_bytes = video_file.read()
+        st.video(video_bytes)
+
 def main():
     _author_ = "melike"
     st.title("Distraction Detection")
@@ -28,15 +34,15 @@ def main():
         """
         % _author_)
     
-    with open(temp_file_to_save, "rb") as video_file:
-        video_bytes = video_file.read()
-        st.video(video_bytes)
+    #with open(temp_file_to_save, "rb") as video_file:
+    #    video_bytes = video_file.read()
+    #    st.video(video_bytes)
 
     tab1, tab2, tab3 = st.tabs(["Upload a File", "Use Webcam", "..."])
     user_input = None
 
     with tab1:
-        uploaded_file = st.file_uploader("Upload a file", type=["avi", "mp4", "jpg", "png", "gif"])
+        uploaded_file = st.file_uploader("Upload a file", type=["avi", "mp4", "mov"])
         generate_file_input = st.button("Detection from File")
             
     user_input = None
@@ -55,11 +61,8 @@ def main():
             with st.spinner("Generating Video..."):
                 try:
                     #st.video(user_input)
-                    video_path = video_predict(temp_file_to_save)
-                    st.write(video_path)
-                    video_file = open(video_path, 'rb')
-                    video_bytes = video_file.read()
-                    st.video(video_bytes)
+                    converted_video = video_predict(temp_file_to_save, temp_file_result)
+                    show_video(converted_video)
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 
