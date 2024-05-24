@@ -9,7 +9,7 @@ import ffmpeg
 
 temp_file_to_save = './temp_file_1.mp4'
 temp_file_result  = './temp_file_2.mp4'
-#output_file = './output_2024-05-23.mp4'
+output_file = './output.mp4'
 
 # func to save BytesIO on a drive
 def write_bytesio_to_file(filename, bytesio):
@@ -29,7 +29,11 @@ def show_video(filename):
         st.video(video_bytes)
 
 def click_button():
-    subprocess.call(args=f"ffmpeg -y -i temp_file_2.mp4 -c:v libx264 h264.mp4".split(" "))
+    pass
+    #convertedVideo = "./testh264.mp4"
+    #subprocess.call(args=f"ffmpeg -y -i {temp_file_result} -c:v libx264 {convertedVideo}".split(" "))
+    #subprocess.call(args=f"ffmpeg -y -c:v h264_v4l2m2m -i {temp_file_result} {convertedVideo}".split(" "))
+    #ffmpeg -f s16le -ac 1 -ar 48000 -acodec pcm_s16le -i input.raw output.mp3
 
 def main():
     _author_ = "melike"
@@ -68,8 +72,8 @@ def main():
             with st.spinner("Generating Video..."):
                 try:
                     #st.video(user_input)
-                    converted_video = video_predict(temp_file_to_save, temp_file_result)
-                    show_video(converted_video)
+                    video_predict(temp_file_to_save, temp_file_result)
+                    show_video(temp_file_to_save)
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
 

@@ -1,7 +1,8 @@
 import cv2
 from ffmpy import FFmpeg
-#import subprocess
+import subprocess
 #import datetime
+import os
 
 face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('files/haarcascade_eye.xml')
@@ -52,15 +53,5 @@ def video_predict(file, output_video_path):
     cap.release()
     out.release()
 
-    convertedVideo = "./h264.mp4"
-    #subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
-
-    ff = FFmpeg(
-        inputs={output_video_path: None},
-        outputs={convertedVideo: '-c:a mp2 -c:v mpeg2video'}
-    )
-    ff.cmd
-    #'ffmpeg -i input.ts -c:a mp2 -c:v mpeg2video output.mp4'
-    ff.run()
-
-    return convertedVideo
+    #os.system("ffmpeg -i temp_file_2.mp4 -vcodec libx264 temp_file_1.mp4")
+    subprocess.call(args=f"ffmpeg -y -i temp_file_2.mp4 -c:v libx264 temp_file_1.mp4".split(" "))
