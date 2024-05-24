@@ -1,5 +1,6 @@
 import cv2
-import subprocess
+from ffmpy import FFmpeg
+#import subprocess
 #import datetime
 
 face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
@@ -52,6 +53,14 @@ def video_predict(file, output_video_path):
     out.release()
 
     convertedVideo = "./h264.mp4"
-    subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
+    #subprocess.call(args=f"ffmpeg -y -i {output_video_path} -c:v libx264 {convertedVideo}".split(" "))
+
+    ff = FFmpeg(
+        inputs={output_video_path: None},
+        outputs={convertedVideo: '-c:a mp2 -c:v mpeg2video'}
+    )
+    ff.cmd
+    #'ffmpeg -i input.ts -c:a mp2 -c:v mpeg2video output.mp4'
+    ff.run()
 
     return convertedVideo
