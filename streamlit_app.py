@@ -61,17 +61,16 @@ def main():
         user_input = io.BytesIO(uploaded_file.read())
         # save uploaded video to disk
         write_bytesio_to_file(temp_file_to_save, user_input)
-        show_video(temp_file_to_save)
+        #show_video(temp_file_to_save)
 
     #if user_input:
         #st.session_state.user_input = user_input
-    user_input = None
+    #user_input = None
     if user_input:
         #user_input = st.session_state.get("user_input", None)
         if user_input:
             with st.spinner("Generating Video..."):
                 try:
-                    #st.video(user_input)
                     video_predict(temp_file_to_save, temp_file_result)
                     show_video(temp_file_to_save)
                 except Exception as e:

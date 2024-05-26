@@ -1,7 +1,7 @@
 import cv2
 import subprocess
 import numpy as np
-#test
+
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.resnet50 import preprocess_input
@@ -28,7 +28,7 @@ def convert_to_x264(input_file, output_file):
     result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
     if result.returncode != 0:
-        print("error:")
+        print("ffmpeg error:")
         print(result.stderr.decode())
     else:
         print("ffmpeg output:")
