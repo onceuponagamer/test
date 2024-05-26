@@ -1,3 +1,7 @@
 streamlit
 opencv-python-headless
 ffmpeg-python
+numpy
+tensorflow
+pillow
+scipy
