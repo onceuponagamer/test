@@ -63,11 +63,11 @@ def main():
         write_bytesio_to_file(temp_file_to_save, user_input)
         #show_video(temp_file_to_save)
 
-    #if user_input:
-        #st.session_state.user_input = user_input
+    if user_input:
+        st.session_state.user_input = user_input
     #user_input = None
     if user_input:
-        #user_input = st.session_state.get("user_input", None)
+        user_input = st.session_state.get("user_input", None)
         if user_input:
             with st.spinner("Generating Video..."):
                 try:
