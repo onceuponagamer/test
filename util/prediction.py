@@ -1,6 +1,7 @@
 import cv2
 import subprocess
 import numpy as np
+import streamlit as st
 
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
@@ -28,11 +29,11 @@ def convert_to_x264(input_file, output_file):
     result = subprocess.run(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
     if result.returncode != 0:
-        print("ffmpeg error:")
-        print(result.stderr.decode())
+        st.error("ffmpeg error:")
+        st.error(result.stderr.decode())
     else:
-        print("ffmpeg output:")
-        print(result.stdout.decode())
+        st.error("ffmpeg output:")
+        st.error(result.stdout.decode())
 
 # distraction predict
 def video_predict(file, output_video_path):
