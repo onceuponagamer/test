@@ -64,7 +64,7 @@ def main():
 
     #if user_input:
         #st.session_state.user_input = user_input
-
+    user_input = None
     if user_input:
         #user_input = st.session_state.get("user_input", None)
         if user_input:
