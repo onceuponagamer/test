@@ -3,3 +3,6 @@ showErrorDetails = true
 
 [theme]
 backgroundColor = "silver"
+
+[logger]
+level = "debug"
