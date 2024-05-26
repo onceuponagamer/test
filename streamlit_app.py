@@ -1,4 +1,4 @@
-# 0.1.1v
+# 0.1.2v
 import streamlit as st
 import io
 from util.prediction import video_predict
