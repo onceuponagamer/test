@@ -1,12 +1,8 @@
 # v 0.0.1
 import streamlit as st
-#import cv2
 import io
 from util.prediction import video_predict
 from util.prediction import convert_to_x264
-#from ffmpy import FFmpeg
-import subprocess
-import ffmpeg
 
 temp_file_to_save = './temp_file_1.mp4'
 temp_file_result  = './temp_file_2.mp4'
