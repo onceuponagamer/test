@@ -76,6 +76,7 @@ def main():
                     show_video(temp_file_to_save)
                 except Exception as e:
                     st.error(f"An error occurred: {e}")
+                    st.error(f"An error occurred: {e.message}")
 
 if __name__ == "__main__":
     main()
