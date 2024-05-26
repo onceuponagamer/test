@@ -71,7 +71,7 @@ def main():
         if user_input:
             with st.spinner("Generating Video..."):
                 try:
-                    print("test")
+                    print(">>>>>> test")
                     #video_predict(temp_file_to_save, temp_file_result)
                     show_video(temp_file_to_save)
                 except Exception as e:
