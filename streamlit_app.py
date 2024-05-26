@@ -64,7 +64,7 @@ def main():
     if generate_file_input and uploaded_file is not None:
         user_input = io.BytesIO(uploaded_file.read())
         # save uploaded video to disk
-        write_bytesio_to_file(temp_file_to_save, user_input)
+        #write_bytesio_to_file(temp_file_to_save, user_input)
 
     #if user_input:
         #st.session_state.user_input = user_input
