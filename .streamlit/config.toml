@@ -2,5 +2,4 @@
 showErrorDetails = true
 
 [theme]
-primaryColor = "#000000"
-backgroundColor = "gray"
+backgroundColor = "silver"
