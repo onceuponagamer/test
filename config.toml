@@ -3,3 +3,4 @@ showErrorDetails = true
 
 [theme]
 primaryColor = #ffffff
+backgroundColor = "white"
