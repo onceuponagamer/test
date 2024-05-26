@@ -61,6 +61,7 @@ def main():
         user_input = io.BytesIO(uploaded_file.read())
         # save uploaded video to disk
         write_bytesio_to_file(temp_file_to_save, user_input)
+        show_video(temp_file_to_save)
 
     #if user_input:
         #st.session_state.user_input = user_input
