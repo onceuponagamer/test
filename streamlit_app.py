@@ -1,4 +1,4 @@
-# v 0.0.1
+# 0.1.0v
 import streamlit as st
 import io
 from util.prediction import video_predict
@@ -34,6 +34,12 @@ def click_button():
     #subprocess.call(args=f"ffmpeg -y -c:v h264_v4l2m2m -i {temp_file_result} {convertedVideo}".split(" "))
     #ffmpeg -f s16le -ac 1 -ar 48000 -acodec pcm_s16le -i input.raw output.mp3
 
+def webcam_button():
+    picture = st.camera_input("Take a picture")
+    if picture:
+        st.image(picture)
+    st.text("webcam text")
+
 def main():
     _author_ = "melike"
     st.title("Distraction Detection")
@@ -55,6 +61,9 @@ def main():
         generate_file_input = st.button("Detection from File")
         st.button('Convert video', on_click=click_button)
             
+    with tab2:
+        st.button('Start webcam', on_click=webcam_button)
+
     user_input = None
 
     if generate_file_input and uploaded_file is not None:
