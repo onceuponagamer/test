@@ -1,91 +1,95 @@
-# 0.1.2.1v
 import streamlit as st
-import io
-from util.prediction import video_predict
-from util.prediction import convert_to_x264
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode, RTCConfiguration
+import cv2
+import av
+import numpy as np
 
-temp_file_to_save = './temp_file_1.mp4'
-temp_file_result  = './temp_file_2.mp4'
-output_file = './output.mp4'
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
 
-# func to save BytesIO on a drive
-def write_bytesio_to_file(filename, bytesio):
-    """
-    Write the contents of the given BytesIO to a file.
-    Creates the file or overwrites the file if it does
-    not exist yet. 
-    """
-    with open(filename, "wb") as outfile:
-        # Copy the BytesIO stream to the output file
-        outfile.write(bytesio.read())
+RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+)
 
-def show_video(filename):
-    #st.write(filename)
-    with open(filename, "rb") as video_file:
-        video_bytes = video_file.read()
-        st.video(video_bytes)
+face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier('files/haarcascade_eye.xml')
 
-def click_button():
-    convert_to_x264(temp_file_result, output_file)
-    #video_predict(temp_file_to_save, temp_file_result)
-    show_video(output_file)
-    #convertedVideo = "./testh264.mp4"
-    #subprocess.call(args=f"ffmpeg -y -i {temp_file_result} -c:v libx264 {convertedVideo}".split(" "))
-    #subprocess.call(args=f"ffmpeg -y -c:v h264_v4l2m2m -i {temp_file_result} {convertedVideo}".split(" "))
-    #ffmpeg -f s16le -ac 1 -ar 48000 -acodec pcm_s16le -i input.raw output.mp3
+cls_list = ['distracted', 'focused']
+#emotion_id = -1
+label_text = ''
 
-def webcam_button():
-    picture = st.camera_input("Take a picture")
-    if picture:
-        st.image(picture)
-    st.text("webcam text")
+# load the trained model
+net = load_model('files/model-resnet50-final.h5')
+
+def process(img):
+    global cls_list, label_text, net, face_cascade, eye_cascade
+
+    scale_factor = 1.1
+    min_neighbours_for_faces = 4
+    min_neighbours_for_eyes = 4
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray,scaleFactor=scale_factor,minNeighbors=min_neighbours_for_faces)
+    print(f"faces: {len(faces)}")
+        
+    for (x,y,w,h) in faces:
+        cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = img[y:y+h, x:x+w]
+        print("face detected")
+        eyes = eye_cascade.detectMultiScale(roi_gray, scaleFactor=scale_factor,minNeighbors=min_neighbours_for_eyes)
+
+        for (ex,ey,ew,eh) in eyes:
+            cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+            print("eyes detected")
+
+            roi = roi_color[ey+2:ey+eh-2, ex+2:ex+ew-2]
+            roi = cv2.resize(roi, (224, 224))
+            roi = image.img_to_array(roi)
+            roi = preprocess_input(roi)
+            roi = np.expand_dims(roi, axis=0)
+
+            try:    
+                pred = net.predict(roi)[0]
+                #print(pred)
+                top_inds = pred.argsort()[::-1][:5]
+
+                label_text = cls_list[top_inds[0]]
+                #emotion_id = top_inds[0]
+
+                for i in top_inds:
+                    print('    {:.3f}  {}'.format(pred[i], cls_list[i]))
+
+            except Exception as e:
+                print(e)
+
+        cv2.putText(img, label_text, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 3, cv2.LINE_AA)
+
+    return img #cv2.flip(img, 1)
+
+class VideoProcessor(VideoProcessorBase):
+    def __init__(self):
+        self.is_running = True
+
+    def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+        img = frame.to_ndarray(format="bgr24")
+
+        print("camera is running")
+        img = process(img)
+
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 def main():
-    _author_ = "melike"
-    st.title("Distraction Detection")
-    st.markdown(
-        """
-        This project developed by %s
-        """
-        % _author_)
-    
-    #with open(temp_file_to_save, "rb") as video_file:
-    #    video_bytes = video_file.read()
-    #    st.video(video_bytes)
+    st.title("face eye detection")
 
-    tab1, tab2, tab3 = st.tabs(["Upload a File", "Use Webcam", "..."])
-    user_input = None
-
-    with tab1:
-        uploaded_file = st.file_uploader("Upload a file", type=["avi", "mp4", "mov"])
-        generate_file_input = st.button("Detection from File")
-        st.button('Convert video', on_click=click_button)
-            
-    with tab2:
-        st.button('Start webcam', on_click=webcam_button)
-
-    user_input = None
-
-    if generate_file_input and uploaded_file is not None:
-        user_input = io.BytesIO(uploaded_file.read())
-        # save uploaded video to disk
-        write_bytesio_to_file(temp_file_to_save, user_input)
-        #show_video(temp_file_to_save)
-
-    if user_input:
-        st.session_state.user_input = user_input
-    #user_input = None
-    if user_input:
-        user_input = st.session_state.get("user_input", None)
-        if user_input:
-            with st.spinner("Generating Video..."):
-                try:
-                    #print(">>>>>> test")
-                    video_predict(temp_file_to_save, temp_file_result)
-                    show_video(temp_file_to_save)
-                except Exception as e:
-                    st.error(f"An error occurred: {e}")
-                    st.error(f"An error occurred: {e.message}")
+    webrtc_ctx = webrtc_streamer(key="distraction-detection",
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=RTC_CONFIGURATION, 
+            media_stream_constraints={"video": True, "audio": False},
+            video_processor_factory=VideoProcessor,
+            async_processing=True)
 
 if __name__ == "__main__":
     main()

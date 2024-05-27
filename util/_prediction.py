@@ -36,9 +36,13 @@ def convert_to_x264(input_file, output_file):
         st.error(result.stdout.decode())
 
 # distraction predict
-def video_predict(file, output_video_path):
+def video_predict(file, output_video_path, cam = False):
     # Capture
-    cap = cv2.VideoCapture(file)
+    if cam is False:
+        cap = cv2.VideoCapture(file)
+    else:
+        st.title("Real-Time Hand Detection")
+        cap = cv2.VideoCapture(1)
 
     # Dummy ground truth labels
     cls_list = ['distracted', 'focused']
@@ -107,6 +111,10 @@ def video_predict(file, output_video_path):
             # Frames
             total_frames += 1
             cv2.putText(img, f"Frames: {total_frames}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
+            
+            #if cam is True:
+            #    cv2.imshow("Camera stream", img)
+
             out.write(img)
 
     cap.release()
