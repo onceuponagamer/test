@@ -31,7 +31,13 @@ def process(img):
     min_neighbours_for_eyes = 4
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray,scaleFactor=scale_factor,minNeighbors=min_neighbours_for_faces)
+    faces = face_cascade.detectMultiScale(
+        gray,
+        scaleFactor=scale_factor,
+        minNeighbors=min_neighbours_for_faces,
+        minSize=(30,30),
+        maxSize=(300,300)
+    )
     print(f"faces: {len(faces)}")
         
     for (x,y,w,h) in faces:
@@ -39,7 +45,13 @@ def process(img):
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = img[y:y+h, x:x+w]
         print("face detected")
-        eyes = eye_cascade.detectMultiScale(roi_gray, scaleFactor=scale_factor,minNeighbors=min_neighbours_for_eyes)
+        eyes = eye_cascade.detectMultiScale(
+            roi_gray, 
+            scaleFactor=scale_factor,
+            minNeighbors=min_neighbours_for_eyes,
+            minSize=(10,10),
+            maxSize=(100,100)
+        )
 
         for (ex,ey,ew,eh) in eyes:
             cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
