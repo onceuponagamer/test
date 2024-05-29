@@ -17,14 +17,14 @@ face_cascade = cv2.CascadeClassifier('files/haarcascade_frontalface_default.xml'
 eye_cascade = cv2.CascadeClassifier('files/haarcascade_eye.xml')
 
 cls_list = ['distracted', 'focused']
-#emotion_id = -1
+emotion_id = -1
 label_text = ''
 
 # load the trained model
 net = load_model('files/model-resnet50-final.h5')
 
 def process(img):
-    global cls_list, label_text, net, face_cascade, eye_cascade
+    global cls_list, emotion_id, label_text, net, face_cascade, eye_cascade
 
     scale_factor = 1.1
     min_neighbours_for_faces = 4
@@ -39,9 +39,11 @@ def process(img):
         maxSize=(300,300)
     )
     print(f"faces: {len(faces)}")
-        
+    
+    color = (255, 255, 255)
+    color2 = (102, 255, 102)
     for (x,y,w,h) in faces:
-        cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+        cv2.rectangle(img,(x,y),(x+w,y+h),color2,2)
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = img[y:y+h, x:x+w]
         print("face detected")
@@ -54,7 +56,6 @@ def process(img):
         )
 
         for (ex,ey,ew,eh) in eyes:
-            cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
             print("eyes detected")
 
             roi = roi_color[ey+2:ey+eh-2, ex+2:ex+ew-2]
@@ -69,15 +70,24 @@ def process(img):
                 top_inds = pred.argsort()[::-1][:5]
 
                 label_text = cls_list[top_inds[0]]
-                #emotion_id = top_inds[0]
+                emotion_id = top_inds[0]
+
+                if emotion_id == 0:
+                    color = (0, 255, 255)
+                elif emotion_id == 1:
+                    color = (255, 255, 0)
+                else:
+                    color = (255, 255, 255)
 
                 for i in top_inds:
                     print('    {:.3f}  {}'.format(pred[i], cls_list[i]))
-
+            
             except Exception as e:
                 print(e)
 
-        cv2.putText(img, label_text, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 3, cv2.LINE_AA)
+            cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),color,2)
+            
+        cv2.putText(img, label_text, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3, cv2.LINE_AA)
 
     return img #cv2.flip(img, 1)
 
@@ -94,7 +104,8 @@ class VideoProcessor(VideoProcessorBase):
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 def main():
-    st.title("face eye detection")
+    st.title("Distraction Detection on Webcam")
+    st.text("Tarayıcı üzerinden gerekli kamera izinlerini verdiğindizden emin olun.")
 
     webrtc_ctx = webrtc_streamer(key="distraction-detection",
             mode=WebRtcMode.SENDRECV,
