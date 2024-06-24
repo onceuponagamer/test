@@ -4,11 +4,10 @@ import cv2
 import av
 import numpy as np
 
-#from tensorflow.keras import backend as K
-#from tensorflow.keras.models import load_model
-#from tensorflow.keras.applications.resnet50 import preprocess_input
-#from tensorflow.keras.preprocessing import image
-import keras
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
 
 RTC_CONFIGURATION = RTCConfiguration(
     {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
@@ -22,7 +21,7 @@ emotion_id = -1
 label_text = ''
 
 # load the trained model
-net = keras.models.load_model('files/model-resnet50-final.h5')
+net = load_model('files/model-resnet50-final.h5')
 
 def process(img):
     global cls_list, emotion_id, label_text, net, face_cascade, eye_cascade
@@ -61,8 +60,8 @@ def process(img):
 
             roi = roi_color[ey+2:ey+eh-2, ex+2:ex+ew-2]
             roi = cv2.resize(roi, (224, 224))
-            roi = keras.preprocessing.image.img_to_array(roi)
-            roi = keras.applications.resnet50.preprocess_input(roi)
+            roi = image.img_to_array(roi)
+            roi = preprocess_input(roi)
             roi = np.expand_dims(roi, axis=0)
 
             try:    
