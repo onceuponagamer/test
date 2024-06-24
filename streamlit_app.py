@@ -4,10 +4,10 @@ import cv2
 import av
 import numpy as np
 
-from tensorflow.keras import backend as K
-from tensorflow.keras.models import load_model
-from tensorflow.keras.applications.resnet50 import preprocess_input
-from tensorflow.keras.preprocessing import image
+from keras import backend as K
+from keras.models import load_model
+from keras.applications.resnet50 import preprocess_input
+from keras.preprocessing import image
 
 RTC_CONFIGURATION = RTCConfiguration(
     {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
