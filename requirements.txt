@@ -6,4 +6,4 @@ numpy
 tensorflow==2.15.0
 pillow
 scipy
-keras==2.4
+keras==2.15.0
