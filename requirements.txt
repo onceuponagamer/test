@@ -3,7 +3,7 @@ streamlit_webrtc
 opencv-python-headless
 ffmpeg-python
 numpy
-tensorflow==2.5.0
+tensorflow==2.15.0
 pillow
 scipy
 keras==2.4
